@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class Meals(models.Model):
+class Meal(models.Model):
     title = models.CharField()
     image = models.TextField()
     instructions = models.TextField()
@@ -11,11 +11,19 @@ class Meals(models.Model):
         return f"Title: {self.title}, Category: {self.category}, Instructions: {self.instructions}"
 
 
-class Ingredients(models.Model):
+class Ingredient(models.Model):
     title = models.CharField()
     measurement = models.CharField()
-    meal = models.ForeignKey(
-        Meals, on_delete=models.CASCADE, related_name="ingredients")
 
     def __str__(self):
         return f"Title: {self.title}, Measurement: {self.measurement}"
+
+
+class Meal_ingredient(models.Model):
+    meal = models.ForeignKey(
+        Meal, on_delete=models.CASCADE, related_name='meal_ingredients')
+    ingredient = models.OneToOneField(
+        Ingredient, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f"Meal: {self.meal}, Ingredient: {self.ingredient}"

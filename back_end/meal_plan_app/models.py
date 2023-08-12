@@ -1,22 +1,16 @@
 from django.db import models
-from meal_app.models import Meals
-from user_app.models import Users
+from meal_app.models import Meal
+from user_app.models import User
+from datetime import date
 
 
-class Meal_plans(models.Model):
+class Meal_plan(models.Model):
     user = models.ForeignKey(
-        Users, on_delete=models.CASCADE, related_name="meal_plans")
-    monday = models.ForeignKey(
-        Meals, on_delete=models.SET_NULL, null=True, blank=True, related_name="monday_meal")
-    tuesday = models.ForeignKey(
-        Meals, on_delete=models.SET_NULL, null=True, blank=True, related_name="tuesday_meal")
-    wednesday = models.ForeignKey(
-        Meals, on_delete=models.SET_NULL, null=True, blank=True, related_name="wednesday_meal")
-    thursday = models.ForeignKey(
-        Meals, on_delete=models.SET_NULL, null=True, blank=True, related_name="thursday_meal")
-    friday = models.ForeignKey(
-        Meals, on_delete=models.SET_NULL, null=True, blank=True, related_name="friday_meal")
-    saturday = models.ForeignKey(
-        Meals, on_delete=models.SET_NULL, null=True, blank=True, related_name="saturday_meal")
-    sunday = models.ForeignKey(
-        Meals, on_delete=models.SET_NULL, null=True, blank=True, related_name="sunday_meal")
+        User, on_delete=models.CASCADE, related_name = 'meal_plans')
+    
+class Day(models.Model):
+    date = models.DateField(default=date.today())
+    meal_plan = models.ForeignKey(
+        Meal_plan, on_delete=models.CASCADE, related_name = 'days_of_meals')
+    daily_meal = models.ForeignKey(
+        Meal, on_delete=models.CASCADE, related_name = 'daily_meal')

@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'friendship_app',
     'meal_plan_app',
     'meal_app',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -131,4 +132,4 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'user_app.Users'
+AUTH_USER_MODEL = 'user_app.User'
