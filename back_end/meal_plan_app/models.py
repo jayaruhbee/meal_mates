@@ -13,4 +13,4 @@ class Day(models.Model):
     meal_plan = models.ForeignKey(
         Meal_plan, on_delete=models.CASCADE, related_name = 'days_of_meals')
     daily_meal = models.ForeignKey(
-        Meal, on_delete=models.CASCADE, related_name = 'daily_meal')
+        Meal, on_delete=models.CASCADE, related_name = 'daily_meal', null = True)

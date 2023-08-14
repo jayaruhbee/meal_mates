@@ -47,6 +47,8 @@ class Meal_plan_manager(APIView):
         return Response('Meal Plan has been removed', 
                         status = status.HTTP_204_NO_CONTENT)
         
+
+        
         
 # VIEW PLANS OF THOSE FOLLOWING/WANT TO GRAB INDIVIDUAL PLAN?
 class Pal_plans(APIView):
@@ -63,3 +65,5 @@ class Pal_plans(APIView):
         return Response(pals_plans, 
                         status = status.HTTP_200_OK)      
         
+
+

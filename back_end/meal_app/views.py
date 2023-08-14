@@ -2,63 +2,86 @@ from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Meal, Ingredient, Meal_ingredient
-from. serializers import MealSerializer, IngredientSerializer, MealIngredientSerializer
+from .models import Meal
 from meal_plan_app.models import Meal_plan, Day
-# from meal_plan_app.serializers import MealPlanSerializer, DaySerializer
+from meal_app.serializers import MealSerializer
+from meal_plan_app.serializers import  DaySerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
-
-
+# TODO: CHECK SERIALIZERS, MAKE USER PERMISSIONS, MAKE ALL INLINE OR REMOVE INLINE FROM OTHER VIEWS
 # VIEW ALL MEALS, CREATE NEW MEAL INSTANCE, DELETE MEAL
 
+# VIEW ALL MEALS
+class All_meals(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request,meal_plan_id):
+        # GET SPECIFIED MEAL PLAN OR 404 IF NOT EXIST
+        meal_plan = get_object_or_404(Meal_plan,user = request.user, id = meal_plan_id)
+        # SET DAYS TO THE DAYS OF MEAL OF MEAL PLAN
+        days = meal_plan.days_of_meals
+        # SERIALIZE THE DAYS TO ACCESS THE MEALS
+        serialized_days = DaySerializer(days, many = True).data
+        meals = []
+        for day in serialized_days:
+            # SOME DAYS HAVE NULL MEALS NOW
+            a_meal = days.get(id=day['id']).daily_meal
+            if a_meal is not None:
+                meals.append(days.get(id = day['id']).daily_meal)
+        # NO DUPES IN LIST
+        meals = list(set(meals))
+        serialized_meals = MealSerializer(meals, many = True).data
+
+        return Response(serialized_meals,status = status.HTTP_200_OK)
+
+# MANAGE ALL OF THE MEALS
 class Meal_manager(APIView):
-    # AUTH IN ORDER TO VIEW USER'S MEALS
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     
-    def get(self, request):
-        # GRAB ALL MEALS BELONGING TO USER, RETURN 200
-        all_meals = Meal.objects.filter(user = request.user)
-        return Response(MealSerializer(all_meals, many = True).data, 
+    def get(self, request, meal_plan_id, meal_id):
+        # GET SPECIFIC MEAL 
+        meal = get_object_or_404(Day,meal_plan = meal_plan_id, daily_meal = meal_id)
+        return Response(DaySerializer(meal).data,
                         status = status.HTTP_200_OK)
     
+    def delete(self, request, meal_plan_id, day_id):
+        # GET THE SPECIFIC DAILY MEAL W DAY/PLAN ID 
+        # TURN THE MEAL MODEL INTO NULL INSTEAD OF DELETING.
+        meal = get_object_or_404(Day,meal_plan = meal_plan_id, id = day_id)
+        meal.daily_meal = None
+        meal.save()
+        return Response('Daily Meal successfully deleted',
+                        status = status.HTTP_204_NO_CONTENT)
+        
+        # EDIT DAILY MEAL
+    def put(self, request, meal_plan_id, day_id, meal_id):
+        # ACCESS CURRENT DAILY MEAL WITH MEAL PLAN AND DAY ID
+        a_daily_meal = get_object_or_404(Day, meal_plan = meal_plan_id, id = day_id)
+        # GET THE NEW MEAL W ID
+        new_meal = get_object_or_404(Meal, id = meal_id)
+        # ASSIGN THE DAILY MEAL TO THE PROVIDED MEAL
+        a_daily_meal.daily_meal = new_meal
+        a_daily_meal.save()
+        a_daily_meal = DaySerializer(a_daily_meal).data
+        return Response('Meal successfully updated', 
+                        status = status.HTTP_204_NO_CONTENT)            
+            
+        
+
+    # CREATE MEAL ASSOC WITH MEAL PLAN & DAY? OR MAKE THEM WITHOUT SO WE CAN CREATE OUR OWN MEALS AND NOT ALWAYS HAVE THEM ASSIGNED WITH A MEAL PLAN..OR BOTH?/RETURN 201
+    def post(self, request, meal_plan_id, meal_id):
+        # GET PLAN
+        meal_plan = get_object_or_404(Meal_plan, id = meal_plan_id)
+        # GET MEAL...TRY EXCEPT TO CREATE?
+        a_meal = get_object_or_404(Meal,id = meal_id)
+        # CREATE MEAL INSTANCE 
+        daily_meal_instance = Day.objects.create(meal_plan = meal_plan, daily_meal = a_meal)
+        daily_meal_instance.save()
+        daily_meal_instance= DaySerializer(daily_meal_instance).data
+        # print(f'meal: {daily_meal_instance}')
+        return Response(daily_meal_instance,
+                        status = status.HTTP_201_CREATED)
+        
     
-    def post(self, request, meal_id, meal_plan_id):
-        # CREATE MEAL FOR USER, FOR DAY AND MEAL PLAN?, RETURN 201
-        try:
-            meal_plan = get_object_or_404(Meal, id = meal_id)
-        except Meal_plan.DoesNotExist:
-            meal_plan = Meal_plan.objects.create(user = request.user)
-        
-        a_meal_plan = Meal_plan.objects.filter()
-        meal = Day.objects.create(daily_meal = meal_id) 
-        
-        
-        
-        
-        
-        # TODO: meal vs daily meal in wrong order I think
-    # def delete(self, request, meal_id, meal_plan_id):
-    #     # DELETE MEAL FOR USER, RETURN 204
-    #     # GET MEAL PLAN FROM USER
-    #     meal_plan = Meal_plan.objects.get(user = request.user, id = meal_plan_id)
-    #     # GET THE DAILY MEAL WITHIN THE MEAL PLAN TO DELETE
-    #     daily_meal = Day.objects.get(meal_plan = meal_plan, daily_meal = meal_id)
-    #     daily_meal.delete()
-    #     return Response("Meal removed",
-    #                     status = status.HTTP_204_NO_CONTENT)
-    
-    
-    def delete(self, request, meal_id):
-        a_meal = MealSerializer(get_object_or_404(request.user.all_meals))
-        a_meal.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-    
-    
-class Meal_by_category(APIView):
-    # GET ALL MEALS BY CATEGORY, RETURN 200, NO AUTH 
-    def get(self, request, category):
-        meal = Meal.objects.filter(category = category)
-        return Response(MealSerializer(meal, many = True), 
-                        status = status.HTTP_200_OK)

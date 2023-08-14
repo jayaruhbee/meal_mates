@@ -5,8 +5,8 @@ from .models import Meal, Ingredient, Meal_ingredient
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
-        fields = ['__all__']
-        # fields = ['id', 'title', 'measurement']
+        # fields = ['__all__']
+        fields = ['id', 'title', 'measurement']
 
 
 class MealIngredientSerializer(serializers.ModelSerializer):
@@ -14,7 +14,7 @@ class MealIngredientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Meal_ingredient
-        fields = ['__all__']
+        fields = ['id','meal', 'ingredient']
         # fields = ['id', 'meal', 'ingredient']
 
 

@@ -3,6 +3,8 @@ from .models import Follow
 from user_app.serializers import UserSerializer
 
 class FollowSerializer(serializers.ModelSerializer):
+    # follower = UserSerializer( )
+    # following = UserSerializer( )
     follower = UserSerializer( read_only = True)
     following = UserSerializer( read_only = True)
     
