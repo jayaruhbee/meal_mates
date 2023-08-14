@@ -73,10 +73,10 @@ class Follower(APIView):
     # GET ALL OF A USER'S FOLLOWERS
     def get(self, request):
         # LIST OF USERS THAT ARE FOLLOWING THE AUTH USER
-        all_followers = FollowSerializer(request.user.followers, many=True).data
+        all_followers = FollowSerializer(request.user.followers, many = True).data
         # TODO: FIX USING OTHER SERIALIZERS
         # all_followers = FollowSerializer(
         #     Follow.objects.filter(following = request.user), many= True).data
-        return Response(all_followers, status=status.HTTP_200_OK)
+        return Response(all_followers, status = status.HTTP_200_OK)
         # return Response(all_followers.data,
         #                 status=status.HTTP_200_OK)
