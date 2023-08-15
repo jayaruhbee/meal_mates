@@ -2,14 +2,12 @@ from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Meal_plan
+from .models import Meal_plan, Day
 from. serializers import MealPlanSerializer
-from friendship_app.models import Follow
-from friendship_app.serializers import Follow
+from user_app.models import User
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 # TODO:ADD USER PERMISSION VIEWS, TRY/EXCEPT
-# TODO:FIX ACCESS W SERIALIZERS
 
 # VIEW ALL MEAL PLANS, VIEW MEAL PLAN BY WEEK, CREATE MEAL PLAN, DELETE MEAL PLAN, VIEW ANOTHER USERS PLAN- UNDER SPECIFIC?
 
@@ -50,20 +48,23 @@ class Meal_plan_manager(APIView):
 
         
         
-# VIEW PLANS OF THOSE FOLLOWING/WANT TO GRAB INDIVIDUAL PLAN?
+# VIEW PLANS OF PAL AND PLAN OF PAL
 class Pal_plans(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     
-    def get(self, request):
-        # GETTING PLANS OF ALL USER IS FOLLOWING
-        pals = Follow.objects.filter(follower = request.user).values('following')
-        # FILTER TO MEAL PLANS OF USERS IN PALS      
-        pals_plans = Meal_plan.objects.filter(user__in = pals)
-        pals_plans = MealPlanSerializer(pals_plans, many = True).data 
-        # TODO: MOVE TO INLINE AFTER
-        return Response(pals_plans, 
-                        status = status.HTTP_200_OK)      
-        
+    def get(self, request, pal_id, pal_plan_id = None):
+        # GETTING A PLAN OF A SPECIFIC PAL 
+        if pal_plan_id:
+            plan = get_object_or_404(Meal_plan, id = pal_plan_id)
+            pal_plan = MealPlanSerializer(plan).data
+            return Response(pal_plan, status = status.HTTP_200_OK)
+
+        else:
+            pal = get_object_or_404(User, id = pal_id)
+            if pal_id and not pal_plan_id:
+                pal_plans = MealPlanSerializer(pal.meal_plans, many = True).data
+                return Response(pal_plans, status = status.HTTP_200_OK)
+
 
 
