@@ -35,13 +35,13 @@ class All_meals(APIView):
 
         return Response(serialized_meals,status = status.HTTP_200_OK)
 
-# MANAGE ALL OF THE MEALS
+# MANAGE ALL OF THE DAILY MEALS
 class Meal_manager(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     
     def get(self, request, meal_plan_id, meal_id):
-        # GET SPECIFIC MEAL 
+        # GET DAILY MEAL
         meal = get_object_or_404(Day,meal_plan = meal_plan_id, daily_meal = meal_id)
         return Response(DaySerializer(meal).data,
                         status = status.HTTP_200_OK)
@@ -51,6 +51,7 @@ class Meal_manager(APIView):
         # TURN THE MEAL MODEL INTO NULL INSTEAD OF DELETING.
         meal = get_object_or_404(Day,meal_plan = meal_plan_id, id = day_id)
         meal.daily_meal = None
+        meal.full_clean()
         meal.save()
         return Response('Daily Meal successfully deleted',
                         status = status.HTTP_204_NO_CONTENT)
@@ -63,11 +64,11 @@ class Meal_manager(APIView):
         new_meal = get_object_or_404(Meal, id = meal_id)
         # ASSIGN THE DAILY MEAL TO THE PROVIDED MEAL
         a_daily_meal.daily_meal = new_meal
+        a_daily_meal.full_clean()
         a_daily_meal.save()
         a_daily_meal = DaySerializer(a_daily_meal).data
         return Response('Meal successfully updated', 
                         status = status.HTTP_204_NO_CONTENT)            
-            
         
 
     # CREATE MEAL ASSOC WITH MEAL PLAN & DAY? OR MAKE THEM WITHOUT SO WE CAN CREATE OUR OWN MEALS AND NOT ALWAYS HAVE THEM ASSIGNED WITH A MEAL PLAN..OR BOTH?/RETURN 201
@@ -80,8 +81,42 @@ class Meal_manager(APIView):
         daily_meal_instance = Day.objects.create(meal_plan = meal_plan, daily_meal = a_meal)
         daily_meal_instance.save()
         daily_meal_instance= DaySerializer(daily_meal_instance).data
-        # print(f'meal: {daily_meal_instance}')
         return Response(daily_meal_instance,
                         status = status.HTTP_201_CREATED)
         
+#  CREATE MEAL, EDIT, DELETE, AND VIEW MEAL 
+class Meals_manager(APIView):
+    def get(self, request, meal_id):
+        meal = get_object_or_404(Meal, id = meal_id)
+        return Response(MealSerializer(meal).data, 
+                        status = status.HTTP_200_OK)
+    
+    def put(self,request,meal_id):
+        meal = get_object_or_404(Meal, id = meal_id)
+        meal.title = request.data.get("title", meal.title)
+        meal.image = request.data.get("image", meal.image)
+        meal.category = request.data.get("category", meal.category)
+        meal.instructions = request.data.get("instructions", meal.instructions)
+        meal.ingredients = request.data.get("ingredients", meal.ingredients)
+        meal.notes = request.data.get("notes", meal.notes)
+        # FULL CLEAN TO MAKE SURE THEY DONT VIOLATE THE VALIDATORS
+        meal.full_clean()
+        meal.save()
+        return Response('Meal Updated',
+                        status = status.HTTP_204_NO_CONTENT)
+    
+    def post(self, request):
+        meal = Meal(**request.data)
+        meal.full_clean()
+        meal.save()
+        return Response(MealSerializer(meal).data,
+                        status = status.HTTP_201_CREATED)
+        
+    def delete(self, request, meal_id):
+        meal = get_object_or_404(Meal, id = meal_id)
+        meal.delete()
+        return Response('Meal deleted',
+                        status = status.HTTP_204_NO_CONTENT)
+ 
+    
     
