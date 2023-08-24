@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.custom_font {
+    font-family: 'Raleway', sans-serif;
+}
+
+.julius-font {
+    font-family: 'Julius Sans One', sans-serif;
+}
+
+
+.crimson_font {
+    font-family: 'Crimson Text', serif;
+}
+
+
+
+html {
+    background: rgb(57,73,96);
+    background: linear-gradient(90deg, rgba(57,73,96,1) 0%, rgba(15,18,23,1) 57%, rgba(12,11,28,1) 99%);
+}
+
+/* background: rgb(1,0,11); */
+/* background: linear-gradient(90deg, rgba(1,0,11,1) 2%, rgba(210,217,218,1) 50%, rgba(5,5,20,0.5998774509803921) 97%); */
+/* bg-gradient-to-r from-gray-700 via-gray-900 to-black */
