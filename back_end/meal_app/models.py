@@ -2,7 +2,8 @@ from django.db import models
 
 class Meal(models.Model):
     title = models.CharField()
-    image = models.ImageField(upload_to='meal_images/', default='meal_images/default.png', blank = True, null = True)
+    image = models.ImageField(upload_to='meal_images/', blank = True, null = True)
+    image_url = models.TextField(blank = True, null = True)
     category = models.CharField()
     instructions = models.TextField(blank = True, null = True)
     ingredients = models.TextField(blank = True, null = True)
