@@ -1,11 +1,12 @@
 from django.urls import path
-from .views import Meal_manager, All_meals, Meals_manager
+from .views import Meal_manager, All_meals, Meals_manager, All_meals_on_plan
 
 
 urlpatterns = [
-    path("<int:meal_plan_id>/", All_meals.as_view(), name = "all_meals"),
+    path("", All_meals.as_view(), name = "all_meals"),
+    path("<int:meal_plan_id>/", All_meals_on_plan.as_view(), name = "all_meals_on_plan"),
     path("<int:meal_plan_id>/<int:meal_id>/", Meal_manager.as_view(), name = "specific_meal"),
-    path("delete_meal/<int:meal_plan_id>/<int:day_id>/", Meal_manager.as_view(), name = "delete_meal"),
+    path("delete_meal/<int:meal_plan_id>/<int:day_id>/", Meal_manager.as_view(), name = "empty_daily_meal"),
     path("update_meal/<int:meal_plan_id>/<int:day_id>/<int:meal_id>/", Meal_manager.as_view(), name = "update_meal"),
     path("create_daily_meal/<int:meal_plan_id>/<int:meal_id>/", Meal_manager.as_view(), name = "create_daily_meal"),
     path("create_meal/", Meals_manager.as_view(), name ="create_meal"),

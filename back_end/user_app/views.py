@@ -8,15 +8,18 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework import status
 from .serializers import UserSerializer
-# TODO: WANT ABILITY DELETE USER?, USER PERMISSIONS VIEW, 
+# from rest_framework.parsers import MultiPartParser, FormParser
+# TODO: WANT ABILITY DELETE USER?, CREATE USER PERMISSIONS VIEWS FOR DRY
 
 # SIGNUP/SIGNIN/LOGOUT/INFO
 
 # SIGN UP - CREATE AN ACCOUNT & RETURN A 201
 class Sign_up(APIView):
+    # parser_classes = (MultiPartParser, FormParser)
+
     def post(self, request):
         # SET USERNAME TO EMAIL TO CREATE USER & CREATE USER WITH THE DATA
-        request.data["username"] = request.data["email"]
+        request.data["username"] = request.data["email"].lower()
         user = User.objects.create_user(**request.data)
         # CREATE A NEW TOKEN
         token = Token.objects.create(user=user)
@@ -29,7 +32,7 @@ class Sign_up(APIView):
 class Sign_in(APIView):
     def post(self, request):
         # SET USERNAME TO EMAIL TO AUTHENTICATE & AUTHENTICATE WITH DATA PROVIDED
-        request.data['username'] = request.data['email']
+        request.data['username'] = request.data['email'].lower()
         user = authenticate(**request.data)
         if user:
             # GET OR CREATE TOKEN FOR USER ONCE AUTHENTICATED & RETURN EMAIL/TOKEN AS RESPONSE
