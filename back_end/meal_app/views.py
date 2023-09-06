@@ -5,7 +5,7 @@ from rest_framework import status
 from .models import Meal
 from meal_plan_app.models import Meal_plan, Day
 from meal_app.serializers import MealSerializer
-from meal_plan_app.serializers import DaySerializer
+from meal_plan_app.serializers import DaySerializer, MealPlanSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.conf import settings
 from django.core.files.storage import default_storage
@@ -71,8 +71,8 @@ class Meal_manager(APIView):
         meal.daily_meal = None
         # meal.full_clean()
         meal.save()
-        return Response('Daily Meal successfully deleted',
-                        status=status.HTTP_204_NO_CONTENT)
+        return Response(MealPlanSerializer(meal.meal_plan).data,
+                        status=status.HTTP_200_OK)
 
         # EDIT DAILY MEAL
     def put(self, request, meal_plan_id, day_id, meal_id):
@@ -85,9 +85,9 @@ class Meal_manager(APIView):
         a_daily_meal.daily_meal = new_meal
         a_daily_meal.full_clean()
         a_daily_meal.save()
-        a_daily_meal = DaySerializer(a_daily_meal).data
-        return Response('Meal successfully updated',
-                        status=status.HTTP_204_NO_CONTENT)
+        a_daily_meal = MealPlanSerializer(a_daily_meal.meal_plan).data
+        return Response(a_daily_meal,
+                        status=status.HTTP_200_OK)
 
     # CREATE MEAL ASSOC WITH MEAL PLAN & DAY? OR MAKE THEM WITHOUT SO WE CAN CREATE OUR OWN MEALS AND NOT ALWAYS HAVE THEM ASSIGNED WITH A MEAL PLAN..OR BOTH?/RETURN 201
 

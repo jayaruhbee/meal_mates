@@ -38,8 +38,9 @@ class Manage_follows(APIView):
     def get(self, request):
         # LIST OF USERS THE AUTH IS FOLLOWING THEN SERIALIZE DATA
         all_following = FollowSerializer(
-            Follow.objects.filter(follower = request.user), many=True)
-        return Response(all_following.data,
+            Follow.objects.filter(follower = request.user), many=True).data
+        print("all following", all_following)
+        return Response(all_following,
                         status = status.HTTP_200_OK)
 
     # FOLLOW A USER AND RETURN A STATUS 201 CREATED RELATIONSHIP

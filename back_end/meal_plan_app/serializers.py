@@ -13,9 +13,12 @@ class DaySerializer(serializers.ModelSerializer):
 
 class MealPlanSerializer(serializers.ModelSerializer):
     user = UserSerializer()
-    days_of_meals = DaySerializer(many = True)
+    days_of_meals = serializers.SerializerMethodField()
     
     class Meta:
         model = Meal_plan
         fields = ["id", "user", "days_of_meals"]
-
+        
+    def get_days_of_meals(self, instance):
+        days = instance.days_of_meals.all().order_by('date')
+        return DaySerializer(days, many = True).data
