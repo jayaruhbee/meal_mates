@@ -28,7 +28,7 @@
 
 //   <main className="flex flex-col justify-center items-center">
 //       <button onClick={() => setShowSuggestion(true)}
-//       className="crimson_font text-gray-200  w-30 h-30 p-2 rounded-md bg-gray-600/50">Need Some Inspo?</button>
+//       className="poiret-font text-gray-200  w-30 h-30 p-2 rounded-md bg-gray-600/50">Need Some Inspo?</button>
 //   {/* {setShowSuggestion && <MealSuggester/>} */}
 //   {/* <div>{meal_plan}</div> */}
 //     {/* <MealPlan mealPlanId={user.id}/> */}

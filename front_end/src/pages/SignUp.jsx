@@ -20,9 +20,7 @@ export default function SignUp() {
     //PREVENT FORM SUBMISSION
     e.preventDefault();
     let response = await api.post("/users/signup/", {
-      
-      // first_name: document.getElementById("first_name").value,
-      // last_name: document.getElementById("last_name").value,
+
       email: document.getElementById("email").value,
       password: document.getElementById("password").value,
       first_name: firstName,
@@ -37,69 +35,60 @@ export default function SignUp() {
     api.defaults.headers.common["Authorization"] = `Token ${token}`;
     setUser(user);
     navigateToSignIn()
-    // navigate("/signin");
+
   };
   return (
     <form onSubmit={signUp}>
-      <main className="relative flex flex-col justify-center items-center w-screen h-screen bg-no-repeat bg-cover bg-[url('../display_images/signin.png')]">
-        <h5 className="custom_font text-center text-white text-9xl font-normal absolute top-10">
+      <main className="relative flex flex-col justify-center items-center w-screen h-screen bg-no-repeat bg-cover bg-[url('../display_images/Bread.png')]">
+        <h5 className="absolute top-10 text-5xl font-bold text-center text-white poiret-font">
           Welcome To Plate Pals
         </h5>
-        <div className="flex flex-col julius-font justify-center pt-3 items-center w-[30%] h-[30%] bg-black/40 relative ">
-          <div className="flex flex-col justify-center items-center w-[60%] h-[48%] bg-white/50">
-            
-              <input
-                className=" py-1 w-[90%] h-[17%]  bg-black/40 rounded-2xl m-1 text-white text-xl text-center font-normal lowercase"
-                type="text"
-                id = "first_name"
-                placeholder="First Name"
-                // value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-              />
-          
-
-            <input
-              className="py-1 w-[90%] h-[17%] bg-black/40 rounded-2xl m-1 text-white text-xl text-center font-normal lowercase"
-              type="text"
-              id = "last_name"
-              placeholder="Last Name"
-              // value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-            />
-
-            <input
-              className="py-1 w-[90%] h-[17%] bg-black/40 rounded-2xl m-1 text-white text-xl text-center font-normal lowercase"
-              id="email"
-              type="email"
-              placeholder="email"
-              // value={userName}
-              // onChange={(e) => setUserName(e.target.value)}
-            />
-
-            <input
-              className="py-1 w-[90%] h-[17%] bg-black/40 rounded-2xl m-1 text-white text-xl text-center font-normal lowercase"
-              id="password"
-              type="password"
-              placeholder="Password"
-              // value={password}
-              // onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-
+        <div className="relative flex flex-col items-center justify-center w-[90%] md:w-[30%] h-[50%] p-6 bg-black/90 rounded-xl shadow-lg lato-font">
+          <input
+            className="w-full py-2 text-xl text-gray-300 text-center font-normal bg-transparent border-b-2 border-gray-400 mb-4 focus:outline-none placeholder-gray-400"
+            type="text"
+            id="first_name"
+            placeholder="First Name"
+            onChange={(e) => setFirstName(e.target.value)}
+          />
+  
+          <input
+            className="w-full py-2 text-xl text-gray-300 text-center font-normal bg-transparent border-b-2 border-gray-400 mb-4 focus:outline-none placeholder-gray-400"
+            type="text"
+            id="last_name"
+            placeholder="Last Name"
+            onChange={(e) => setLastName(e.target.value)}
+          />
+  
+          <input
+            className="w-full py-2 text-xl text-gray-300 text-center font-normal bg-transparent border-b-2 border-gray-400 mb-4 focus:outline-none placeholder-gray-400"
+            id="email"
+            type="email"
+            placeholder="Email"
+          />
+  
+          <input
+            className="w-full py-2 text-xl text-gray-300 text-center font-normal bg-transparent border-b-2 border-gray-400 mb-4 focus:outline-none placeholder-gray-400"
+            id="password"
+            type="password"
+            placeholder="Password"
+          />
+  
           <button
-            className="w-[60%] h-7 mt-3 bg-black/40 rounded-2xl text-white text-xl text-center font-normal lowercase"
+            className="w-full h-12 mt-4 text-xl font-bold text-white text-center bg-slate-500 rounded-xl hover:bg-gunmetal transition-all duration-300 focus:outline-none"
             type="submit"
           >
             Register
           </button>
-        </div>
-        <div
-          onClick={navigateToSignIn}
-          className="julius-font w-60 h-7 mt-3 bg-black/40 rounded-xl text-white text-xl text-center lowercase"
-        >
-          already have an account?
+          <div
+            onClick={navigateToSignIn}
+            className="w-full mt-4 text-xl text-gray-300 text-center cursor-pointer hover:underline lato-font"
+          >
+            Already Have an Account?
+          </div>
         </div>
       </main>
     </form>
   );
+  
 }

@@ -7,7 +7,7 @@ from. serializers import MealPlanSerializer, DaySerializer
 from user_app.models import User
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 # TODO:ADD USER PERMISSION VIEWS, TRY/EXCEPT
 
 # VIEW ALL MEAL PLANS, VIEW MEAL PLAN BY WEEK, CREATE MEAL PLAN, DELETE MEAL PLAN, VIEW ANOTHER USERS PLAN- UNDER SPECIFIC?
@@ -41,32 +41,53 @@ class Meal_plan_manager(APIView):
     #                     status = status.HTTP_201_CREATED)
     
     
-    # CREATING MEAL PLAN AND SETTING DAILY INSTANCES FOR EACH DAY OF WEEK M-S
+        
+    # CREATING MEAL PLAN WITH WEEK OPTION AND SETTING DAILY INSTANCES FOR EACH DAY OF WEEK M-S
     def post(self, request):
-        # CREATE MEAL PLAN INSTANCE
-        today = date.today()
-        current_date = today
-        # MONDAY == 0
-        # FINDING MONDAY OF THE WEEK MEAL PLAN IS CREATED
-        while current_date.weekday() != 0:
-            current_date -= timedelta(days=1)
-# GET ALL DAYS FOR PREV MONDAY ASSOC WITH USER, IF GREATER THAN 0, MEAL PLAN FOR THIS WEEK ALREADY EXISTS
-# WHEN ALLOWING USER TO SELECT WEEK, CHECK IF THE DAY SELECTED 
+        selected_week = request.data.get("selectedWeek")
+        selected_date = datetime.strptime(selected_week, "%Y-%m-%dT%H:%M:%S.%fZ").date()
 
-        if Day.objects.filter(date=current_date, meal_plan__user=request.user).count() > 0:
-            return Response("meal plan starting on previous Monday already exists", status=status.HTTP_400_BAD_REQUEST)  
-        meal_plan = Meal_plan.objects.create(user = request.user)
-        # CREATE 7 DAILY MEAL INSTANCES
+        days_until_monday = (selected_date.weekday() - 0) % 7
+        monday = selected_date - timedelta(days=days_until_monday)
+
+        if Day.objects.filter(date=monday, meal_plan__user=request.user).exists():
+            return Response("A meal plan starting on the selected week already exists.", status=status.HTTP_400_BAD_REQUEST)
+
+        meal_plan = Meal_plan.objects.create(user=request.user)
+
         for day_num in range(7):
-            day_date = current_date + timedelta(days=day_num)
-            
-            Day.objects.create(
-                meal_plan=meal_plan,
-                date = day_date)
-            
+            day_date = monday + timedelta(days=day_num)
+            Day.objects.create(meal_plan=meal_plan, date=day_date)
+
         serialized_days_of_plan = DaySerializer(meal_plan.days_of_meals.all(), many=True).data
-        return Response( serialized_days_of_plan,
-                        status=status.HTTP_201_CREATED)
+        return Response(serialized_days_of_plan, status=status.HTTP_201_CREATED)
+    
+    # CREATING MEAL PLAN AND SETTING DAILY INSTANCES FOR EACH DAY OF WEEK M-S
+#     def post(self, request):
+#         # CREATE MEAL PLAN INSTANCE
+#         today = date.today()
+#         current_date = today
+#         # MONDAY == 0
+#         # FINDING MONDAY OF THE WEEK MEAL PLAN IS CREATED
+#         while current_date.weekday() != 0:
+#             current_date -= timedelta(days=1)
+# # GET ALL DAYS FOR PREV MONDAY ASSOC WITH USER, IF GREATER THAN 0, MEAL PLAN FOR THIS WEEK ALREADY EXISTS
+# # WHEN ALLOWING USER TO SELECT WEEK, CHECK IF THE DAY SELECTED 
+
+#         if Day.objects.filter(date=current_date, meal_plan__user=request.user).count() > 0:
+#             return Response("meal plan starting on previous Monday already exists", status=status.HTTP_400_BAD_REQUEST)  
+#         meal_plan = Meal_plan.objects.create(user = request.user)
+#         # CREATE 7 DAILY MEAL INSTANCES
+#         for day_num in range(7):
+#             day_date = current_date + timedelta(days=day_num)
+            
+#             Day.objects.create(
+#                 meal_plan=meal_plan,
+#                 date = day_date)
+            
+#         serialized_days_of_plan = DaySerializer(meal_plan.days_of_meals.all(), many=True).data
+#         return Response( serialized_days_of_plan,
+#                         status=status.HTTP_201_CREATED)
 
     # DELETE MEAL PLAN & RETURN 204
     def delete(self, request, meal_plan_id):

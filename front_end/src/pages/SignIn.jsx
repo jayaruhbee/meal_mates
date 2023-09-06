@@ -32,30 +32,40 @@ export default function SignIn() {
   };
   return (
     <form onSubmit={SignIn}>
-      <main className="relative flex flex-col justify-center items-center w-screen h-screen bg-no-repeat bg-cover bg-[url('../display_images/signin.png')]">
-        <h5 className="custom_font text-center text-white text-9xl font-normal absolute top-10">Welcome Back</h5>
-        <div className="flex flex-col julius-font justify-center pt-3 items-center w-[30%] h-[30%] bg-black/40 relative ">
-          <div className="flex flex-col justify-center items-center w-[60%] h-[48%] bg-white/50">
-            <input
-              className="w-60 h-7  bg-black/40 rounded-2xl m-3 text-white text-xl text-center font-normal lowercase"
-              id="email"
-              type="email"
-              placeholder="email"
-            />
-            <input
-              className="w-60 h-7  bg-black/40 rounded-2xl text-white text-xl text-center font-normal lowercase"
-              id="password"
-              type="password"
-              placeholder="password"
-            />
-          </div>
+      <main className="relative flex flex-col justify-center items-center w-screen h-screen bg-no-repeat bg-cover bg-[url('../display_images/Bread.png')]">
+        <h5 className="absolute top-10 text-5xl font-bold text-center text-white poiret-font">
+          Welcome Back
+        </h5>
+        <div className="relative flex flex-col items-center justify-center w-[90%] md:w-[30%] h-[50%] p-6 bg-black/90 rounded-xl shadow-lg lato-font">
           <input
-            className="w-[60%]  h-7 mt-3 bg-black/40 rounded-2xl text-white text-xl text-center font-normal lowercase"
-            type="submit"
+            className="w-full py-2 text-xl text-gray-300 text-center font-normal bg-transparent border-b-2 border-gray-400 mb-4 focus:outline-none placeholder-gray-400"
+            id="email"
+            type="email"
+            placeholder="Email"
           />
+  
+          <input
+            className="w-full py-2 text-xl text-gray-300 text-center font-normal bg-transparent border-b-2 border-gray-400 mb-4 focus:outline-none placeholder-gray-400"
+            id="password"
+            type="password"
+            placeholder="Password"
+          />
+  
+          <button
+            className="w-full h-12 mt-4 text-xl font-bold text-white text-center bg-slate-500 rounded-xl hover:bg-gunmetal transition-all duration-300 focus:outline-none"
+            type="submit"
+          >
+            Sign In
+          </button>
+          <div
+            onClick={navigateToSignUp}
+            className="w-full mt-4 text-xl text-gray-300 text-center cursor-pointer hover:underline lato-font"
+          >
+            Need an Account?
+          </div>
         </div>
-        <div onClick={navigateToSignUp} className="julius-font w-60 h-7 mt-3 bg-black/40 rounded-2xl text-white text-xl text-center font-normal lowercase">Need an Account?</div>
       </main>
     </form>
   );
+  
 }

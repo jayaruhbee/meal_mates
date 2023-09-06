@@ -30,22 +30,18 @@ import {
   RocketLaunchIcon,
   Bars2Icon,
 } from "@heroicons/react/24/outline";
+
 import React, { useEffect } from "react";
 // import { useState } from "react";
 import { useContext, useState } from "react";
 // import { useOutletContext } from "react-router-dom";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation, NavLink } from "react-router-dom";
 import { api } from "../utilities";
 import { userContext } from "../App";
 
-/*TODO: USER NAME NOT SHOWING*/
 
 // *DROP DOWN PROFILE MENU ITEMS
 const dropDownProfileMenuItems = [
-  // {
-  //   label: "Users",
-  //   icon: UserIcon,
-  // },
   {
     label: "Log Out",
     icon: PowerIcon,
@@ -131,12 +127,12 @@ const navBarItems = [
     icon: UserIcon,
   },
   {
-    label: "Meals",
-    icon: MoonIcon,
+    label: "Create",
+    icon: ChevronDoubleUpIcon,
   },
   {
-    label: "Create Your Plan",
-    icon: ChevronDoubleUpIcon,
+    label: "Plan",
+    icon: MoonIcon,
   },
 ];
 
@@ -145,34 +141,37 @@ function whichPage(label) {
   switch (label) {
     case "Pals":
       return "/all_users";
-    case "Meals":
+    case "Create":
       return "/mealCreation";
     case "Home":
       return "/home";
     // HOME IS MEAL PLANS RN
-    case "Create Your Plan":
+    case "Plan":
       return "/setmealplan";
-    // default:
-    //   return "#"; // Default link
+
   }
 }
 // *FUNCTION FOR NAVBAR ITEMS
 function NavBar() {
   return (
-    <ul className="mb-1 mt-2 pt-2 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center">
-      {/* <NavBarMenu /> */}
-      {navBarItems.map(({ label, icon }, key) => (
+    <ul className="my-2 pt-2 ml-2 lg:ml-0 flex flex-col lg:flex-row lg:items-center">
+      {navBarItems.map(({ label, icon }) => (
         <Typography
           key={label}
           as="div"
           variant="small"
-          className="font-normal text-silver text-lg underline "
+          className="font-normal text-silver text-lg"
         >
-          {/* USE LINK INSTEAD OF ANCHOR TAGS */}
-          <Link to={whichPage(label)}>
-            <MenuItem className="flex items-center px-2 gap-2 lg:rounded-full">
+          <Link
+            to={whichPage(label)}
+        
+          >
+            <MenuItem className="relative flex items-center px-2 gap-2 lg:rounded-full">
               {React.createElement(icon, { className: "h-[30px] w-[30px]" })}
               {label}
+              {location.pathname === whichPage(label) && (
+                <div className="glowing-circle"></div>
+              )}
             </MenuItem>
           </Link>
         </Typography>
@@ -183,22 +182,25 @@ function NavBar() {
 
 export default function NavbarDefault() {
   const { user, setUser } = useContext(userContext);
+  const location = useLocation()
+  const showNavbar = location.pathname !== '/signup' && location.pathname !== '/signin' && location.pathname !== '/'
 
 
   useEffect(() => {
-    console.log("useEffect user",user)
+    // console.log("useEffect user",user)
   },[user])
 
 
   // ONLY SHOW NAVBAR TO AUTH USERS
-  if (!user) {
+  if (!user || !showNavbar) {
     return null;
   }
   return (
-    <Navbar className="crimson_font p-2 lg:pl-6 bg-gray-900 rounded-sm">
+    <Navbar className="poiret-font p-2 lg:pl-6 bg-gray-900 rounded-sm">
       <div className="relative mx-auto flex items-center text-blue-gray-900">
-        <div className="relative flex w-full gap-2 md:w-max text-silver-600 text-2xl pr-5">{user? `Welcome ${user.first_name}!` : "Welcome" }</div>
-
+        <div className="relative flex w-full gap-2 md:w-max text-silver-600 text-3xl pr-5">
+          {user ? `Welcome ${user.first_name}!` : "Welcome"}
+        </div>
         <div className="relative flex w-full gap-2 md:w-max">
           {/* <Input
               placeholder="Find a meal here.."
@@ -208,10 +210,9 @@ export default function NavbarDefault() {
               }}
               /> */}
         </div>
-        <div className="flex flex-row  lg:block">
+        <div className="flex flex-row lg:flex">
           <NavBar />
         </div>
-
         <DropDownProfileMenu />
       </div>
     </Navbar>
